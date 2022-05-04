@@ -1,0 +1,10 @@
+## Nous abortderon les HOOR 
+### UseState: Hook d'état : 
+Il renvoie une **valeur d'état** et une fonction pour mettre ajour l'état actuel du composant fronctionnel 
+(permet de préserver les valeur entre les appelle des fonction au sains d'u composant fonctionnel)
+#### Sintace:
+`const[value,setValue] = useState("some Text")` et revoie le valeur et la fonction qui permet de la modifier 
+### UseEffect: Hook d'effet 
+Il permet d'applicaquer **l'éffet de bord** lorsque l'état locale du composant fonctionnel à été modifié.
+
+
