@@ -2,9 +2,17 @@
 ### UseState: Hook d'état : 
 Il renvoie une **valeur d'état** et une fonction pour mettre ajour l'état actuel du composant fronctionnel 
 (permet de préserver les valeur entre les appelle des fonction au sains d'u composant fonctionnel)
-#### Sintace:
+#### Syntaxe:
 `const[value,setValue] = useState("some Text")` et revoie le valeur et la fonction qui permet de la modifier 
 ### UseEffect: Hook d'effet 
 Il permet d'applicaquer **l'éffet de bord** lorsque l'état locale du composant fonctionnel à été modifié.
+#### Syntaxe:
+`UseEffecte(fns, arg)` **fonction de rappelle pour l'effer**  et une **liste de dépendance**, 
+`UseEffecte(() => {
+// do something here 
+}, [dependance ])
+` il s'execute une fois au momoent du chargement du composant === ComopomentDidMonte
 
-
+### UseRef 
+Il permet de faire de la programation inpérative sur un objet du dome, l'application de ce Hook permet d'avoir un **proporier current 
+qui permet d'avoire acces a la valeur de l'eelement du DOM
