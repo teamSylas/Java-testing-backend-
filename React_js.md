@@ -1,4 +1,7 @@
 ## Nous abortderon les HOOR 
+Les conction d'utilisation des hook 
+- [x] A l'interieur du composant 
+- [x] A la racine du composant 
 ### UseState: Hook d'état : 
 Il renvoie une **valeur d'état** et une fonction pour mettre ajour l'état actuel du composant fronctionnel 
 (permet de préserver les valeur entre les appelle des fonction au sains d'u composant fonctionnel)
