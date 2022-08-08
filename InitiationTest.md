@@ -55,7 +55,90 @@ Exemple:
 ```
 contextUtil.when(() -> ContextUtil.pushContext(contextMock)).thenAnswer((Answer<Void>) invocation -> null);
 ```
+## Tester la partie API
+Dans ce car il faut avoir un instance du serveur dans la classe ou l'API veut être tester. Dans notre explemple 
+- on garde toujours l'anotion : *@ExtendWith(MockitoExtension.class)* 
+- puis on regle de problement de l'appelle au contexte avec notre classe statique
+- on dicque les classe a mock pour fait fonctionner notre API pui on initialise le server
+- ensuit on test l'appelle a API pour cela : 
+	- on crée un client, 
+	- on indique le type (JSON) consommer 
+	- on presise les parametre 
+	- on indique le type de requet *.request().get()*
+	- on test en tout premier le type de reponse du server 
+	- on recuper le contenue de la répons qu'on a produite nous même 
+	- checke du résultat
+Exemple :
+### GET 
+```ruby
+@ExtendWith(MockitoExtension.class)
+public class AttributeControllerTest {
 
+	static class AttributeControllerMock extends AttributeController {
 
-  
+		@Override
+		public Context getAuthenticatedContext(HttpServletRequest request, boolean arg1) {
+// Return null because the Context will be not used. In fact, the businessService method that require the Context will be mocked, because it is not tested here
+			return null;
+		}
+	}
+	/**
+	 * The 'Business Service' Layer is not tested here. So we mock it
+	 */
+	@Mock
+	private AttributeServices attributeServicesMock;
+
+	/**
+	 * REST API controller under test. The annotation @InjectMocks indicates to Mockito this is the class to inject the mocks into
+	 */
+	@InjectMocks
+	private AttributeControllerMock attributeControllerMock;
+
+	@RegisterExtension
+	final JaxrsServerExtension<AttributeControllerMock> server = JaxrsServerExtension.newInstance(AttributeControllerMock.class, () -> attributeControllerMock).addProvider(new JacksonJsonProvider());
+	
+	// [----Call Web Service----]
+		final Response response = ClientBuilder.newClient() // create new Client
+				.register(new JacksonJsonProvider()) // with Jackson JSON provider
+				.target(server.getBaseUrl()) // On server specified by its URL
+				.path("Attributes/attributes/rangesWithTranslation").queryParam("attributeName", ATTRIBUTE_NAME).request().get();
+
+	// [----Check WS result------]
+		assertEquals(200, response.getStatus());
+	// [------Récuperation du contenue de la répons---------]
+	final List<RangeItem> actualRange = response.readEntity(new GenericType<List<RangeItem>>() {
+		});
+	//[-------cheque du contenue de la répons-------]
+		assertEquals(expectedRangeItems.size(), actualRange.size());
+
+```
+
+### POST
+- au niveau du post en fonction de ce qui est passer on peur utiliser serializer ou un déserializer 
+- pu remarque la fin de la tranmission qui different d'un *get*
+
+```java
+	// Call Web Service
+		final Response response = ClientBuilder.newClient() // create new Client
+				.register(new JacksonJsonProvider().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)) // with Jackson JSON provider
+				.target(server.getBaseUrl()) // On server specified by its URL
+				.path(path).request().post(Entity.entity(expectedResult, MediaType.APPLICATION_JSON));
+
+		// Check WS result
+		assertEquals(200, response.getStatus());
+
+		DACoDesign actual = response.readEntity(DACoDesign.class);
+```
+
+### put 
+```Java 
+		// Call Web Service
+		final Response response = ClientBuilder.newClient() // create new Client
+				.register(new JacksonJsonProvider()) // with Jackson JSON provider
+				.target(server.getBaseUrl()) // On server specified by its URL
+				.path(path).request().put(Entity.entity(wsArgs, MediaType.APPLICATION_JSON));
+
+		// Check WS result
+		assertEquals(200, response.getStatus());
+```
   
